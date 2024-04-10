@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import router from './router/route.js';
 import connectDB from './database/connect.js';
+import user from './router/user.js';
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 
 /**routes */
 app.use('/api', router);
+app.use('/api/user', user);
 
 app.get('/', (req, res) => {
     try {

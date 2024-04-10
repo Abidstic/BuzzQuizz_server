@@ -4,7 +4,7 @@ import createSchema from './schema.js';
 // Function to connect to the database
 const connectDB = () => {
     return new Promise((resolve, reject) => {
-        const db = new sqlite3.Database('./database/database.db', (err) => {
+        const db = new sqlite3.Database('./database.db', (err) => {
             if (err) {
                 reject(err); // Reject if there's an error
             } else {
