@@ -2,9 +2,12 @@ import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import router from './router/route.js';
 import connectDB from './database/connect.js';
 import user from './router/user.js';
+import question from './router/question.js';
+import course from './router/course.js';
+import option from './router/option.js';
+import quiz from './router/quiz.js';
 
 dotenv.config();
 
@@ -17,8 +20,11 @@ app.use(cors());
 app.use(express.json());
 
 /**routes */
-app.use('/api', router);
 app.use('/api/user', user);
+app.use('/api/question', question);
+app.use('/api/course', course);
+app.use('/api/options', option);
+app.use('/api/quiz', quiz);
 
 app.get('/', (req, res) => {
     try {
