@@ -83,7 +83,7 @@ const loginUser = (req, res) => {
             const userId = user.UserID;
             const userRole = user.UserRole;
             const token = generateToken(userId, userRole);
-            res.json({ userId, token });
+            res.json({ userId, token, userRole });
         } catch (error) {
             console.error('Error comparing passwords:', error);
             res.status(500).send('Internal Server Error');
@@ -97,7 +97,7 @@ const logout = (req, res) => {
 };
 
 // Get User by ID
-const getUserById = (req, res) => {
+export async function getUserById(req, res) {
     const userId = req.params.id;
 
     const sql = `SELECT * FROM Users WHERE UserID = ?`;
@@ -115,22 +115,70 @@ const getUserById = (req, res) => {
 
         res.json(user);
     });
-};
+}
+export async function getUserId(userId) {
+    const sql = `SELECT * FROM Users WHERE UserID = ?`;
+    return new Promise((resolve, reject) => {
+        db.get(sql, [userId], (err, user) => {
+            if (err) {
+                console.error('Error getting user:', err);
+                reject(err);
+            } else if (!user) {
+                reject('User not found');
+            } else {
+                resolve(user);
+            }
+        });
+    });
+}
 
 // Update User
-const updateUser = (req, res) => {
+const updateUser = async (req, res) => {
+    console.log('heree........');
     try {
         const userId = req.params.id;
         const { firstName, lastName, email, userRole } = req.body;
+        console.log({ firstName, lastName, email, userRole, userId });
 
-        // Update the user's information
-        const updateUserSql = `UPDATE Users SET FirstName = ?, LastName = ?, Email = ?, UserRole = ? WHERE UserID = ?`;
-        db.run(updateUserSql, [firstName, lastName, email, userRole, userId]);
+        // Construct the SQL query dynamically based on the provided fields
+        let updateValues = [];
+        let updateFields = [];
+
+        if (firstName !== undefined) {
+            updateFields.push('FirstName = ?');
+            updateValues.push(firstName);
+        }
+        if (lastName !== undefined) {
+            updateFields.push('LastName = ?');
+            updateValues.push(lastName);
+        }
+        if (email !== undefined) {
+            updateFields.push('Email = ?');
+            updateValues.push(email);
+        }
+        if (userRole !== undefined) {
+            updateFields.push('UserRole = ?');
+            updateValues.push(userRole);
+        }
+
+        // Update the user's information if at least one field is provided
+        if (updateFields.length > 0) {
+            const updateUserSql = `UPDATE Users SET ${updateFields.join(
+                ', '
+            )} WHERE UserID = ?`;
+            const values = [...updateValues, userId];
+            await db.run(updateUserSql, values);
+        }
+
+        // Retrieve the updated user
+        const user = await getUserId(userId);
+        res.json(user); // Return the updated user
     } catch (error) {
         console.error('Error updating user:', error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+
 // Delete User
 const deleteUser = (req, res) => {
     try {
@@ -147,4 +195,4 @@ const deleteUser = (req, res) => {
     }
 };
 
-export { loginUser, getUserById, updateUser, deleteUser, logout };
+export { loginUser, updateUser, deleteUser, logout };
