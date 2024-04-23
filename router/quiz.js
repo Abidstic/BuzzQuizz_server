@@ -11,6 +11,8 @@ router.get('/all', controller.getQuizzes);
 
 // Get a quiz by ID
 router.get('/:id', controller.getQuizById);
+// Get a quiz by courseID
+router.get('/course/:id', controller.getQuizByCourseId);
 
 // Update a quiz
 router.put('/:id', controller.updateQuiz);

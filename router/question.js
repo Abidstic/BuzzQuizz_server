@@ -7,10 +7,15 @@ const router = Router();
 router.post('/', controller.createQuestion);
 
 // Get questions by quiz ID
-router.get('/quizzes/:id/questions', controller.getQuestionsByQuizId);
+// router.get('/quizzes/:id/questions', controller.getQuestionsByQuizId);
 
 // Update a question
 router.put('/:id', controller.updateQuestion);
+
+router.get(
+    '/quizzes/:id/questions',
+    controller.getQuestionsWithOptionsByQuizId
+);
 
 // Delete a question
 router.delete('/:id', controller.deleteQuestion);

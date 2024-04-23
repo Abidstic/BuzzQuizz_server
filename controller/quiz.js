@@ -78,6 +78,25 @@ export const getQuizById = (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
+export const getQuizByCourseId = (req, res) => {
+    try {
+        const courseId = req.params.id;
+
+        // Retrieve a specific quiz by its ID
+        const selectQuizSql = `SELECT * FROM Quizzes WHERE CourseID = ?`;
+        db.all(selectQuizSql, [courseId], (err, quizzes) => {
+            if (err) {
+                console.error('Error getting quizzes:', err);
+                res.status(500).send('Internal Server Error');
+            } else {
+                res.json(quizzes);
+            }
+        });
+    } catch (error) {
+        console.error('Error getting quiz:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
 
 // Update Quiz
 export const updateQuiz = (req, res) => {

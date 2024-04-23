@@ -50,6 +50,56 @@ export const getQuestionsByQuizId = (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
+export const getQuestionsWithOptionsByQuizId = (req, res) => {
+    try {
+        const quizId = req.params.id;
+
+        // Retrieve all questions and their options associated with the given quiz
+        const selectQuestionsAndOptionsSql = `
+            SELECT q.QuestionID, q.QuestionText, q.QuestionType, o.OptionID, o.OptionText, o.IsCorrect
+            FROM Questions q
+            JOIN Options o ON q.QuestionID = o.QuestionID
+            WHERE q.QuizID = ?
+            ORDER BY q.QuestionID, o.OptionID
+        `;
+
+        db.all(selectQuestionsAndOptionsSql, [quizId], (err, data) => {
+            if (err) {
+                console.error('Error getting questions and options:', err);
+                res.status(500).send('Internal Server Error');
+            } else {
+                const questionsWithOptions = [];
+                let currentQuestion = null;
+
+                data.forEach((row) => {
+                    if (
+                        !currentQuestion ||
+                        row.QuestionID !== currentQuestion.QuestionID
+                    ) {
+                        currentQuestion = {
+                            QuestionID: row.QuestionID,
+                            QuestionText: row.QuestionText,
+                            QuestionType: row.QuestionType,
+                            Options: [],
+                        };
+                        questionsWithOptions.push(currentQuestion);
+                    }
+
+                    currentQuestion.Options.push({
+                        OptionID: row.OptionID,
+                        OptionText: row.OptionText,
+                        IsCorrect: row.IsCorrect,
+                    });
+                });
+
+                res.json(questionsWithOptions);
+            }
+        });
+    } catch (error) {
+        console.error('Error getting questions and options:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
 
 // Update Question
 export const updateQuestion = (req, res) => {
