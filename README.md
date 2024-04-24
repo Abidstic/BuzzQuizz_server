@@ -10,7 +10,7 @@ Follow these steps to set up and run the repository on your local machine:
 
 Create a `.env` file in the root directory of the project and add the following variables:
 
-PORT=<port-number>
+PORT= <port-number>
 JWT_SECRET=<your-secret-key>
 
 Replace `<port-number>` with the desired port number for your application and `<your-secret-key>` with your JWT secret key.
@@ -29,7 +29,7 @@ If you prefer using Nodemon for automatic server restarts during development, ad
 
 Manually send an API request to the following endpoint:
 
-POST http://localhost:<port>/api/user/register
+POST [POST http://localhost:<port>/api/user/register](http://localhost:<port>/api/user/register)
 
 Replace <port> with the port number you specified in the .env file.
 
