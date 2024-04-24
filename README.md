@@ -10,8 +10,9 @@ Follow these steps to set up and run the repository on your local machine:
 
 Create a `.env` file in the root directory of the project and add the following variables:
 
-PORT=<port-number>
-JWT_SECRET=<your-secret-key>
+PORT= `<port-number>`
+
+JWT_SECRET= `<your-secret-key>`
 
 Replace `<port-number>` with the desired port number for your application and `<your-secret-key>` with your JWT secret key.
 
