@@ -30,7 +30,7 @@ If you prefer using Nodemon for automatic server restarts during development, ad
 
 Manually send an API request to the following endpoint:
 
-POST [POST http://localhost:<port>/api/user/register](http://localhost:<port>/api/user/register)
+POST [http://localhost:<port>/api/user/register](http://localhost:<port>/api/user/register)
 
 Replace <port> with the port number you specified in the .env file.
 
