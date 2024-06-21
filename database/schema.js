@@ -1,8 +1,25 @@
+import sqlite3 from 'sqlite3';
+
+// Function to run SQL command with async/await
+const runSql = (db, sql) => {
+    return new Promise((resolve, reject) => {
+        db.run(sql, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
+};
+
 // Function to create database schema
 const createSchema = async (db) => {
     try {
         // Create Users Table
-        await db.run(`
+        await runSql(
+            db,
+            `
             CREATE TABLE IF NOT EXISTS Users (
                 UserID INTEGER PRIMARY KEY AUTOINCREMENT,
                 Username VARCHAR(50) UNIQUE,
@@ -12,20 +29,26 @@ const createSchema = async (db) => {
                 Email VARCHAR(100),
                 UserRole TEXT CHECK(UserRole IN ('student', 'teacher', 'admin'))
             )
-        `);
+        `
+        );
 
         // Create Courses Table
-        await db.run(`
+        await runSql(
+            db,
+            `
             CREATE TABLE IF NOT EXISTS Courses (
                 CourseID INTEGER PRIMARY KEY AUTOINCREMENT,
                 CourseName VARCHAR(100),
                 TeacherID INTEGER,
                 FOREIGN KEY (TeacherID) REFERENCES Users(UserID)
             )
-        `);
+        `
+        );
 
         // Create Enrollment Table
-        await db.run(`
+        await runSql(
+            db,
+            `
             CREATE TABLE IF NOT EXISTS Enrollment (
                 EnrollmentID INTEGER PRIMARY KEY AUTOINCREMENT,
                 StudentID INTEGER,
@@ -33,10 +56,13 @@ const createSchema = async (db) => {
                 FOREIGN KEY (StudentID) REFERENCES Users(UserID),
                 FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
             )
-        `);
+        `
+        );
 
         // Create Quizzes Table
-        await db.run(`
+        await runSql(
+            db,
+            `
             CREATE TABLE IF NOT EXISTS Quizzes (
                 QuizID INTEGER PRIMARY KEY AUTOINCREMENT,
                 QuizTitle VARCHAR(100),
@@ -48,10 +74,13 @@ const createSchema = async (db) => {
                 FOREIGN KEY (TeacherID) REFERENCES Users(UserID),
                 FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
             )
-        `);
+        `
+        );
 
         // Create Questions Table
-        await db.run(`
+        await runSql(
+            db,
+            `
             CREATE TABLE IF NOT EXISTS Questions (
                 QuestionID INTEGER PRIMARY KEY AUTOINCREMENT,
                 QuestionText TEXT,
@@ -59,10 +88,13 @@ const createSchema = async (db) => {
                 QuizID INTEGER,
                 FOREIGN KEY (QuizID) REFERENCES Quizzes(QuizID)
             )
-        `);
+        `
+        );
 
         // Create Options Table
-        await db.run(`
+        await runSql(
+            db,
+            `
             CREATE TABLE IF NOT EXISTS Options (
                 OptionID INTEGER PRIMARY KEY AUTOINCREMENT,
                 OptionText TEXT,
@@ -70,10 +102,13 @@ const createSchema = async (db) => {
                 QuestionID INTEGER,
                 FOREIGN KEY (QuestionID) REFERENCES Questions(QuestionID)
             )
-        `);
+        `
+        );
 
         // Create Question_Quiz Table
-        await db.run(`
+        await runSql(
+            db,
+            `
             CREATE TABLE IF NOT EXISTS Question_Quiz (
                 QuestionID INTEGER,
                 QuizID INTEGER,
@@ -81,10 +116,13 @@ const createSchema = async (db) => {
                 FOREIGN KEY (QuizID) REFERENCES Quizzes(QuizID),
                 PRIMARY KEY (QuestionID, QuizID)
             )
-        `);
+        `
+        );
 
         // Create UserResponse Table
-        await db.run(`
+        await runSql(
+            db,
+            `
             CREATE TABLE IF NOT EXISTS UserResponse (
                 ResponseID INTEGER PRIMARY KEY AUTOINCREMENT,
                 UserID INTEGER,
@@ -98,7 +136,8 @@ const createSchema = async (db) => {
                 FOREIGN KEY (QuestionID) REFERENCES Questions(QuestionID),
                 FOREIGN KEY (ChosenOption) REFERENCES Options(OptionID)
             )
-        `);
+        `
+        );
 
         console.log('Database schema created successfully.');
 
